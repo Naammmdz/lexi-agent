@@ -31,6 +31,10 @@ export ENABLE_RERANKING="${ENABLE_RERANKING:-1}"
 
 log() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$LOG"; }
 
+if [[ "${ENABLE_RERANKING}" != "1" ]]; then
+  log "WARNING: ENABLE_RERANKING is not 1 — IR will NOT match ~0.631. Export ENABLE_RERANKING=1 before continuing."
+fi
+
 require_file() {
   if [[ ! -f "$1" ]]; then
     echo "ERROR: missing file: $1" >&2

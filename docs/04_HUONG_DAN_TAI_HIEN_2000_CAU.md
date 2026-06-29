@@ -1,5 +1,8 @@
 # Hướng dẫn tái hiện pipeline 2000 câu (R2AI)
 
+> **Giám khảo:** đọc **[HUONG_DAN_GIAM_KHAO.md](HUONG_DAN_GIAM_KHAO.md)** — một file, 10 bước, dễ hiểu.  
+> File này là **bản chi tiết kỹ thuật** (tham khảo thêm, lệnh PowerShell từng dòng).
+
 Tài liệu này mô tả cách **chạy đầy đủ** pipeline từ `R2AIStage1DATA.json` để sinh bài nộp **2000 dòng**, đúng quy định chương trình R2AI (Quy trình và hướng dẫn nộp bài dự thi).
 
 **Đầu vào bắt buộc:** `R2AIStage1DATA.json` (2000 câu hỏi)  
@@ -217,6 +220,14 @@ $env:ENABLE_RERANKING="1"
 $env:RERANKER_DEVICE="cuda"   # hoặc cpu
 ```
 
+> **CẢNH BÁO — `ENABLE_RERANKING=1` (bắt buộc)**
+>
+> - Phải đặt **trước** bước ① `cache_live_retrieval.py` và giữ nguyên khi chạy `run_full_2000_pipeline.sh`.
+> - Nếu log in ra `Reranking disabled in configuration` → cache **sai**, điểm IR sẽ **không** ~0.631. Dừng lại, `export ENABLE_RERANKING=1` (hoặc ghi vào `.env`), xóa cache cũ rồi chạy lại bước ①.
+> - Log đúng phải có: `Reranker model loaded successfully`.
+> - Không dùng `SKIP_CACHE=1` trừ khi file `data/augmented/live_retrieval_rrf_wide_merged.json` đã được build **cùng cấu hình** (reranker bật, merged corpus, RRF wide).
+> - `--limit N` chỉ để pilot — **không** thay cho chạy full 2000 câu khi nghiệm thu.
+
 ---
 
 ## 3. Chạy full pipeline (khuyến nghị)
@@ -226,11 +237,14 @@ $env:RERANKER_DEVICE="cuda"   # hoặc cpu
 ```bash
 cd lexi-agent
 source venv/bin/activate
-export ENABLE_RERANKING=1
-export RERANKER_DEVICE=mps    # Mac Apple Silicon; Linux GPU: cuda; CPU: cpu
+export USE_MERGED_CORPUS=1 HYBRID_FUSION=rrf USE_WIDE_RETRIEVAL_POOL=1
+export ENABLE_RERANKING=1          # bắt buộc — xem cảnh báo mục 2.6
+export RERANKER_DEVICE=mps       # Mac Apple Silicon; Linux GPU: cuda; CPU: cpu
 
 bash scripts/run_full_2000_pipeline.sh
 ```
+
+> Kiểm tra nhanh sau bước ①: mở log, tìm `Reranker model loaded successfully`. Nếu thấy `Reranking disabled` → dừng và sửa biến môi trường.
 
 ### Windows
 
@@ -301,6 +315,24 @@ for name in ('submission.zip', 'submission_qa.zip'):
 print('OK')
 "@
 ```
+
+So sánh với bản tham chiếu trên Git (tùy chọn — sau khi build xong):
+
+```bash
+git show HEAD:submission.zip > /tmp/submission_ref.zip
+python3 -c "
+import json, zipfile
+def arts(p):
+    r=json.loads(zipfile.ZipFile(p).read('results.json'))
+    return {x['id']: tuple(x.get('relevant_articles') or []) for x in r}
+g,a=arts('/tmp/submission_ref.zip'), arts('submission.zip')
+diff=sum(1 for i in g if g.get(i)!=a.get(i))
+print(f'article field diffs: {diff}/2000')
+print('OK match' if diff==0 else 'MISMATCH — kiểm tra ENABLE_RERANKING và chạy lại cache từ đầu')
+"
+```
+
+Nếu `MISMATCH` nhiều (ví dụ >100 dòng): thường do cache thiếu reranker hoặc zone swap không áp dụng — **không** dùng file vừa build để nộp; chạy lại full pipeline từ bước ①.
 
 ### Điểm khi nộp lên BTC
 
@@ -433,6 +465,8 @@ Dùng cho kiểm tra nhanh format; **nghiệm thu khuyến nghị mục 3**.
 | Cache dừng giữa chừng | Mất session / sleep | Chạy lại bước ① với `--resume` |
 | QA dừng giữa chừng | Timeout / RAM | Chạy lại bước ⑤ với `--resume` |
 | `corpus not found` | Thiếu merged JSON | Tải từ Drive |
+| Log `Reranking disabled` | Quên `ENABLE_RERANKING=1` | Export đủ biến mục 2.6, xóa cache, chạy lại bước ① |
+| `submission.zip` khác bản Git | Cache cũ / thiếu reranker / `SKIP_CACHE=1` sai | So sánh script mục 3; build lại cache full 2000 |
 | Chậm / OOM | Reranker + embed cùng lúc | Chạy cache trên GPU server; QA tách process |
 | `total != 2000` | `--limit` còn trong lệnh | Bỏ `--limit`, chạy lại full |
 

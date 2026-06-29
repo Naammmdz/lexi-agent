@@ -11,6 +11,7 @@
 
 | STT | Tài liệu | File |
 |-----|----------|------|
+| **★** | **Hướng dẫn giám khảo (đọc file này trước)** | **[HUONG_DAN_GIAM_KHAO.md](HUONG_DAN_GIAM_KHAO.md)** |
 | 0 | Giới thiệu sản phẩm | [00_GIOI_THIEU.md](00_GIOI_THIEU.md) |
 | 1 | Mô tả dữ liệu | [01_MO_TA_DU_LIEU.md](01_MO_TA_DU_LIEU.md) |
 | 2 | Mô hình & checkpoint | [02_MO_HINH.md](02_MO_HINH.md) |
@@ -26,7 +27,7 @@
 
 **Link:** https://drive.google.com/drive/folders/1yrTBTV-pTdS2FObe1shBHiYmMPsxhazH?usp=drive_link
 
-Trong folder có **`data/`** và **`index/`** (~3 GB tổng). Người tái hiện tải về rồi đặt vào thư mục gốc repo — chi tiết Mac/Windows: [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) mục 2.3.
+Trong folder có **`data/`** và **`index/`** (~3 GB tổng). Cách tải và copy vào repo: [HUONG_DAN_GIAM_KHAO.md](HUONG_DAN_GIAM_KHAO.md) bước 3.
 
 | Thư mục trên Drive | Nội dung |
 |--------------------|----------|
@@ -77,18 +78,26 @@ Chi tiết: [03_MA_NGUON_VA_CAU_HINH.md](03_MA_NGUON_VA_CAU_HINH.md)
 
 Theo quy định R2AI, người đọc phải **chạy pipeline từ `R2AIStage1DATA.json`** để sinh đủ **2000 dòng** bài nộp.
 
-| Tài liệu | Nội dung |
-|----------|----------|
-| [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) | Hướng dẫn chi tiết từng bước |
-| `scripts/run_full_2000_pipeline.sh` | Một lệnh: cache IR → build → QA |
-| [README.md](../README.md) | Cài đặt Python, Qdrant, Ollama, Lexi UI |
-| `verify_setup.py` | Kiểm tra môi trường |
+**Giám khảo chỉ cần mở một file:**
 
-Lệnh tái hiện chính:
+👉 **[HUONG_DAN_GIAM_KHAO.md](HUONG_DAN_GIAM_KHAO.md)** — 10 bước từ clone Git → Drive → chạy pipeline → kiểm tra kết quả (Mac + Windows, tiếng Việt dễ đọc).
+
+| Tài liệu khác | Khi nào cần |
+|---------------|-------------|
+| [HUONG_DAN_GIAM_KHAO.md](HUONG_DAN_GIAM_KHAO.md) | **Tái hiện bài nộp — đọc file này** |
+| `scripts/run_full_2000_pipeline.sh` | Lệnh gói 5 phần xử lý (bước 8 trong hướng dẫn giám khảo) |
+| [README.md](../README.md) | Tóm tắt cài đặt |
+| [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) | Chi tiết kỹ thuật / PowerShell từng lệnh |
+| `verify_setup.py` | Kiểm tra môi trường (bước 7) |
+
+Lệnh chính (nằm trong hướng dẫn giám khảo, bước 8):
 
 ```bash
+export USE_MERGED_CORPUS=1 HYBRID_FUSION=rrf USE_WIDE_RETRIEVAL_POOL=1 ENABLE_RERANKING=1
 bash scripts/run_full_2000_pipeline.sh
 ```
+
+> Phải bật xếp hạng lại (`ENABLE_RERANKING=1`) trước khi chạy. Bỏ bước tìm kiếm 2000 câu → file kết quả **khác** bản tham chiếu trên Git.
 
 ---
 
