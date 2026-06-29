@@ -105,15 +105,13 @@ ollama list                     # kiểm tra
 
 ## 2.3. Checkpoint & artifact cần chia sẻ
 
-> **Link tổng hợp:** `[ĐIỀN LINK GOOGLE DRIVE]`
-
-| Artifact | Có cần upload? | Ghi chú |
-|----------|----------------|---------|
-| Ollama `qwen3:4b-instruct` | **Không** | Hướng dẫn `ollama pull` |
-| HF embedding / reranker | **Không** (có internet) | Hoặc zip `~/.cache/huggingface/` nếu offline |
-| `submission.zip` | **Có** | Kết quả IR tốt nhất (~0.631 F2) |
-| `submission_qa.zip` | **Có** | 2000 câu trả lời QA |
-| Qdrant snapshot | Khuyến nghị | Tránh build lại 30–90 phút |
+| Artifact | Có trên GitHub? | Cách lấy |
+|----------|-----------------|----------|
+| Mã nguồn | **Có** | https://github.com/Naammmdz/lexi-agent |
+| `submission.zip`, `submission_qa.zip` | **Có** | Trong repo sau clone |
+| Ollama `qwen3:4b-instruct` | Không (weight) | `ollama pull qwen3:4b-instruct` |
+| HF embedding / reranker | Không (cache) | Tự tải khi chạy; hoặc zip `~/.cache/huggingface/` nếu offline |
+| Corpus + BM25 + Qdrant snapshot | Không | Gói Drive (`r2ai-data-bundle`) — [01_MO_TA_DU_LIEU.md](01_MO_TA_DU_LIEU.md) |
 
 ### Export Qdrant snapshot (cho người tái hiện)
 
@@ -147,7 +145,7 @@ File nộp: `submission.zip` (variant `rrf_swap_g008`)
 
 | Backend | Số câu | File |
 |---------|--------|------|
-| Ollama `qwen3:4b-instruct` | 2000/2000 | `submission_qa.zip` |
+| Ollama `qwen3:4b-instruct` | 2000/2000 | `submission_qa.zip` — xem [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) |
 
 ---
 

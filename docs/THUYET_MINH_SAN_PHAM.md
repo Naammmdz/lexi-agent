@@ -1,6 +1,7 @@
 # Tài liệu thuyết minh sản phẩm — Lexi (Vietnamese Legal Chatbot)
 
 **Sản phẩm:** Trợ lý AI pháp lý cho doanh nghiệp SME (Lexi Agent)  
+**Repository:** https://github.com/Naammmdz/lexi-agent  
 **Cuộc thi / chương trình:** R2AI — Legal Text Retrieval & QA  
 **Hạn nộp:** 17h30 ngày 30/06/2026
 
@@ -10,60 +11,84 @@
 
 | STT | Tài liệu | File |
 |-----|----------|------|
+| 0 | Giới thiệu sản phẩm | [00_GIOI_THIEU.md](00_GIOI_THIEU.md) |
 | 1 | Mô tả dữ liệu | [01_MO_TA_DU_LIEU.md](01_MO_TA_DU_LIEU.md) |
 | 2 | Mô hình & checkpoint | [02_MO_HINH.md](02_MO_HINH.md) |
 | 3 | Mã nguồn & cấu hình | [03_MA_NGUON_VA_CAU_HINH.md](03_MA_NGUON_VA_CAU_HINH.md) |
-| 4 | Hướng dẫn cài đặt & tái hiện | [../README.md](../README.md) |
+| 4 | **Tái hiện pipeline 2000 câu** | [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) |
+| — | Cài đặt môi trường & Lexi UI | [../README.md](../README.md) |
 
 ---
 
 ## Checklist nộp bài
 
-### A. Dữ liệu (link Google Drive / OneDrive)
+### A. Dữ liệu (Google Drive)
 
-> **Link chia sẻ dữ liệu:** `[ĐIỀN LINK — ví dụ: https://drive.google.com/...]`
+**Link:** https://drive.google.com/drive/folders/1yrTBTV-pTdS2FObe1shBHiYmMPsxhazH?usp=drive_link
 
-Nén và upload gói `r2ai-data-bundle/` gồm:
+Trong folder có **`data/`** và **`index/`** (~3 GB tổng). Người tái hiện tải về rồi đặt vào thư mục gốc repo — chi tiết Mac/Windows: [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) mục 2.3.
 
-| Thành phần | Đường dẫn trong repo | Kích thước (ước lượng) | Bắt buộc |
-|------------|----------------------|------------------------|----------|
-| Corpus luật (merged) | `data/corpus/legal_corpus_merged.json` | ~664 MB | Có |
-| Ánh xạ tên văn bản | `data/law_id_to_title_merged.json` | ~2 MB | Có |
-| BM25 index | `index/bm25_index_merged.pkl` | ~1.3 GB | Có (hoặc build lại, xem README) |
-| Stopwords | `data/utils/stopwords.txt` | <1 MB | Có |
-| Tập câu hỏi R2AI | `R2AIStage1DATA.json` | ~518 KB | Có |
-| Qdrant snapshot | export từ collection `bkai_biencoder_vietnamese_legal_corpus_merged` | ~2–5 GB | Khuyến nghị (hoặc build lại bằng `setup_system.py`) |
-| Bài nộp IR | `submission.zip` | ~204 KB | Có |
-| Bài nộp QA | `submission_qa.zip` | ~449 KB | Có |
+| Thư mục trên Drive | Nội dung |
+|--------------------|----------|
+| `data/` | Corpus merged, law_id mapping, stopwords, … |
+| `index/` | BM25 `bm25_index_merged.pkl` |
 
-### B. Mô hình / checkpoint (link)
+Qdrant vector DB: build lại bằng `setup_system.py --rebuild` (không bắt buộc có trên Drive).
 
-> **Link checkpoint & model card:** `[ĐIỀN LINK — ví dụ: https://drive.google.com/...]`
+**Không cần Drive** (trên https://github.com/Naammmdz/lexi-agent ): mã nguồn, `docs/`, `R2AIStage1DATA.json`, `submission.zip`, `submission_qa.zip`.
+
+### B. Mô hình / checkpoint
+
+Model **không** cần upload Drive — tải qua Ollama / Hugging Face khi chạy (xem [02_MO_HINH.md](02_MO_HINH.md)).
 
 | Mô hình | Nguồn | Ghi chú |
 |---------|-------|---------|
-| `qwen3:4b-instruct` | Ollama Hub | LLM sinh câu trả lời chat/QA — **không** cần upload weight, chỉ `ollama pull` |
-| `bkai-foundation-models/vietnamese-bi-encoder` | Hugging Face | Embedding — tự tải khi chạy lần đầu |
-| `AITeamVN/Vietnamese_Reranker` | Hugging Face | Reranker (tùy chọn, `ENABLE_RERANKING=1`) |
+| `qwen3:4b-instruct` | Ollama Hub | `ollama pull qwen3:4b-instruct` |
+| `bkai-foundation-models/vietnamese-bi-encoder` | Hugging Face | Tự tải lần đầu chạy |
+| `AITeamVN/Vietnamese_Reranker` | Hugging Face | `ENABLE_RERANKING=1` trên GPU |
 
-Chi tiết: [02_MO_HINH.md](02_MO_HINH.md)
+Qdrant snapshot (nếu có) đóng gói chung gói Drive mục A.
 
 ### C. Mã nguồn
 
-- Repository: `[ĐIỀN LINK GITHUB / GITLAB]` hoặc file `r2ai-source.zip`
-- **Không** đính kèm thư mục `venv/`, `__pycache__/`, `.git/` (nếu nén tay)
-- Kèm file `.env.example` (đã có trong repo)
+- **Repository:** https://github.com/Naammmdz/lexi-agent  
+- Clone:
 
-Chi tiết cấu trúc: [03_MA_NGUON_VA_CAU_HINH.md](03_MA_NGUON_VA_CAU_HINH.md)
+**macOS / Linux:**
 
-### D. README & tái hiện
+```bash
+git clone https://github.com/Naammmdz/lexi-agent.git
+cd lexi-agent
+```
 
-File [README.md](../README.md) mô tả đầy đủ:
+**Windows (PowerShell):**
 
-- Yêu cầu phần cứng / phần mềm
-- Cài đặt từ đầu (Python, Ollama, Qdrant, dữ liệu)
-- Lệnh chạy UI Lexi, pipeline IR/QA
-- Cách kiểm tra (`verify_setup.py`)
+```powershell
+git clone https://github.com/Naammmdz/lexi-agent.git
+cd lexi-agent
+```
+
+- Kèm `.env.example`, `scripts/run_full_2000_pipeline.sh` (Mac/Linux/Git Bash; Windows PowerShell xem mục 3 trong [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md))
+- **Không** đính kèm `venv/`, `__pycache__/`, `data/`, `index/` (file lớn — xem mục A Drive)
+
+Chi tiết: [03_MA_NGUON_VA_CAU_HINH.md](03_MA_NGUON_VA_CAU_HINH.md)
+
+### D. Hướng dẫn tái hiện (bắt buộc)
+
+Theo quy định R2AI, người đọc phải **chạy pipeline từ `R2AIStage1DATA.json`** để sinh đủ **2000 dòng** bài nộp.
+
+| Tài liệu | Nội dung |
+|----------|----------|
+| [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) | Hướng dẫn chi tiết từng bước |
+| `scripts/run_full_2000_pipeline.sh` | Một lệnh: cache IR → build → QA |
+| [README.md](../README.md) | Cài đặt Python, Qdrant, Ollama, Lexi UI |
+| `verify_setup.py` | Kiểm tra môi trường |
+
+Lệnh tái hiện chính:
+
+```bash
+bash scripts/run_full_2000_pipeline.sh
+```
 
 ---
 
@@ -71,15 +96,7 @@ File [README.md](../README.md) mô tả đầy đủ:
 
 | Hạng mục | Metric | Ghi chú |
 |----------|--------|---------|
-| Information Retrieval (public) | ARTICLES_F2 ~ **0.631** | `submission.zip` — hybrid RRF wide + merged corpus |
-| Question Answering | 2000/2000 câu | `submission_qa.zip` — grounded QA qua Ollama |
-| Sản phẩm demo | Lexi UI | http://127.0.0.1:7860 — RAG + Ollama, giao diện SME |
-
----
-
-## Liên hệ đội thi
-
-| Vai trò | Họ tên | Email |
-|---------|--------|-------|
-| Trưởng nhóm | `[ĐIỀN]` | `[ĐIỀN]` |
-| Kỹ thuật | `[ĐIỀN]` | `[ĐIỀN]` |
+| Information Retrieval (public) | ARTICLES_F2 **0.6308** | `submission.zip` — RRF wide + zone swap |
+| | DOCS_F2 0.6466 | |
+| Question Answering | **2000 / 2000** câu | `submission_qa.zip` — Ollama grounded |
+| Sản phẩm demo | Lexi UI | http://127.0.0.1:7860 |

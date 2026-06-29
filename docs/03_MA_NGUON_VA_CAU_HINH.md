@@ -1,9 +1,16 @@
 # 3. Mã nguồn & cấu hình triển khai
 
+**Repository:** https://github.com/Naammmdz/lexi-agent
+
+```bash
+git clone https://github.com/Naammmdz/lexi-agent.git
+cd lexi-agent
+```
+
 ## 3.1. Cấu trúc thư mục chính
 
 ```
-vietnamese-legal-chatbot/
+lexi-agent/
 ├── app.py                  # Entry point — UI Lexi / Gradio
 ├── lexi_server.py          # FastAPI server cho giao diện Lexi
 ├── config.py               # Toàn bộ hyperparameter & đường dẫn
@@ -37,6 +44,13 @@ vietnamese-legal-chatbot/
 │   │   ├── build_hf_vbpl_gap_corpus.py   # Gap từ HF vbpl.vn
 │   │   └── build_merged_corpus_v2.py     # Merge Zalo + gap
 │   └── submission/         # Script tạo submission IR/QA
+│
+├── scripts/
+│   ├── run_full_2000_pipeline.sh   # Tái hiện 2000 câu
+│   └── pack_data_bundle.sh
+│
+├── test_r2ai_pipeline.py   # RAG end-to-end (một lệnh)
+├── R2AIStage1DATA.json     # 2000 câu hỏi test
 │
 ├── data/                   # Dữ liệu (tải từ Drive)
 ├── index/                  # BM25 pickle
@@ -116,7 +130,7 @@ ollama serve
 ollama pull qwen3:4b-instruct
 
 # Terminal 3 — App
-cd vietnamese-legal-chatbot
+cd lexi-agent
 cp .env.example .env
 source venv/bin/activate
 PYTHONUNBUFFERED=1 UI_MODE=lexi python app.py
@@ -137,18 +151,31 @@ python setup_system.py --test      # + chạy 3 câu hỏi mẫu
 python verify_setup.py
 ```
 
-### Tạo bài nộp IR / QA
+### Tái hiện bài nộp 2000 câu (từ R2AIStage1DATA.json)
 
 ```bash
-# IR (đã có submission.zip tốt nhất)
-venv/bin/python tools/submission/create_final_submission.py
-
-# QA batch qua Ollama
-venv/bin/python tools/submission/create_qa_submission.py \
-  --backend ollama \
-  --model qwen3:4b-instruct \
-  --output submission_qa.zip
+# Một lệnh — cache IR + build + QA
+bash scripts/run_full_2000_pipeline.sh
 ```
+
+Chi tiết từng bước: [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md)
+
+Script end-to-end đơn giản (không zone swap):
+
+```bash
+python test_r2ai_pipeline.py
+```
+
+### Script submission chính
+
+| Script | Vai trò |
+|--------|---------|
+| `cache_live_retrieval.py` | Cache retrieval 2000 câu |
+| `create_cache_only_submission.py` | Seed IR từ cache |
+| `create_recall_boost_submission.py` | Recall boost companion |
+| `create_rrf_zone_swap_submission.py` | Zone swap (~0.631) |
+| `create_qa_submission.py` | Sinh answer Ollama |
+| `test_r2ai_pipeline.py` | RAG một lệnh (retrieve + answer) |
 
 ---
 

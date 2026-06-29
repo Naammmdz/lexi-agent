@@ -1,41 +1,54 @@
 # R2AI Submission Tools
 
-Các script trong thư mục này phục vụ tạo và kiểm tra bài nộp R2AI. Tất cả đều tự trỏ về repo root, nên chạy từ root repo bằng `venv/bin/python tools/submission/<script>.py`.
+Script tạo và kiểm tra bài nộp R2AI. Chạy từ thư mục gốc repo:
 
-## Augmented corpus (merge Zalo + vbpl.vn)
+```bash
+venv/bin/python tools/submission/<script>.py
+```
 
-Nguồn legal DB công khai để bổ sung văn bản thiếu:
+---
 
-**https://huggingface.co/datasets/th1nhng0/vietnamese-legal-documents** (vbpl.vn, CC BY 4.0)
+## Tái hiện full 2000 câu (nghiệm thu)
 
-1. Thu thập gap (QH / NĐ-CP / Thông tư chưa có trong Zalo):
+Repo: https://github.com/Naammmdz/lexi-agent
+
+```bash
+git clone https://github.com/Naammmdz/lexi-agent.git
+cd lexi-agent
+bash scripts/run_full_2000_pipeline.sh
+```
+
+### Luồng từng bước
+
+| # | Script | Output |
+|---|--------|--------|
+| 1 | `cache_live_retrieval.py` | `data/augmented/live_retrieval_rrf_wide_merged.json` |
+| 2 | `create_cache_only_submission.py` | Seed IR (không cần `submission.zip` cũ) |
+| 3 | `create_recall_boost_submission.py` | `no_wl_tight_v1` variant |
+| 4 | `create_rrf_zone_swap_submission.py` | `submission.zip` (~0.631 F2) |
+| 5 | `create_qa_submission.py` | `submission_qa.zip` (2000 answer) |
+
+Hướng dẫn đầy đủ: [docs/04_HUONG_DAN_TAI_HIEN_2000_CAU.md](../../docs/04_HUONG_DAN_TAI_HIEN_2000_CAU.md)
+
+---
+
+## Corpus (merge Zalo + vbpl.vn)
+
+Nguồn công khai: [th1nhng0/vietnamese-legal-documents](https://huggingface.co/datasets/th1nhng0/vietnamese-legal-documents)
 
 ```bash
 venv/bin/python tools/corpus/build_hf_vbpl_gap_corpus.py
+venv/bin/python tools/corpus/build_merged_corpus_v2.py --gap data/augmented/hf_vbpl_gap_corpus.json
+bash tools/corpus/run_p4_corpus_pipeline.sh
 ```
 
-Output: `data/augmented/hf_vbpl_gap_corpus.json`
+---
 
-2. Merge vào corpus chính:
+## Script khác
 
-```bash
-venv/bin/python tools/corpus/build_merged_corpus_v2.py \
-  --gap data/augmented/hf_vbpl_gap_corpus.json
-```
-
-Output: `data/corpus/legal_corpus_merged.json`, `data/law_id_to_title_merged.json`
-
-Pipeline đầy đủ: `bash tools/corpus/run_p4_corpus_pipeline.sh`
-
-### Legacy (dev nội bộ)
-
-- `create_augmented_corpus_from_db.py` — Postgres `legal_db` local (không bắt buộc nghiệm thu)
-- `build_vlsp_bulk_gap_corpus.py` — thử nghiệm VLSP2025 (đã thay bằng HF vbpl)
-
-## Legacy / Comparison Tools
-
-- `create_method_submission.py`: tạo variant từ BM25/hybrid/hybrid_rerank cũ.
-- `create_submission_variants.py`: cắt top-k từ `results.json` có sẵn.
-- `create_strict_answer_submission.py`: giữ retrieval top1 và rewrite answer ngắn.
-- `normalize_submission.py`: normalize refs của `results.json` rồi rebuild `submission.zip`.
-- `submission_benchmark.py`: benchmark train_qna kiểu leaderboard cho pipeline cũ.
+| Script | Mục đích |
+|--------|----------|
+| `test_r2ai_pipeline.py` (root) | RAG end-to-end một lệnh |
+| `benchmark_companion_candidate.py` | Audit offline companion |
+| `submission_benchmark.py` | Benchmark train_qna |
+| `clean_for_submit.py` | Dọn artifact trước nộp |

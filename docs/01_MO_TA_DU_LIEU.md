@@ -39,7 +39,13 @@ Script: `tools/corpus/build_hf_vbpl_gap_corpus.py` → `tools/corpus/build_merge
 
 | File | Mô tả |
 |------|--------|
-| `R2AIStage1DATA.json` | ~518 KB — danh sách câu hỏi pháp lý tiếng Việt cho giai đoạn IR/QA của chương trình R2AI |
+| `R2AIStage1DATA.json` | **2000 câu hỏi** pháp lý tiếng Việt — **đầu vào bắt buộc** khi tái hiện pipeline (theo quy định nộp bài R2AI) |
+
+Định dạng mỗi phần tử:
+
+```json
+{ "id": 1, "question": "Nội dung câu hỏi..." }
+```
 
 ### Dữ liệu phụ trợ
 
@@ -104,34 +110,36 @@ Sau khi index, mỗi **điều luật** trở thành một document:
 
 ### Bài nộp IR (`submission.zip`)
 
-CSV trong ZIP, mỗi dòng một câu hỏi:
+ZIP phẳng chứa `results.json` — mảng **2000** object:
 
-| Cột | Mô tả |
-|-----|--------|
-| `question_id` | ID câu hỏi |
-| `relevant_articles` | Danh sách tham chiếu điều luật (format `law_id\|Tên luật\|Điều N`) |
+| Trường | Mô tả |
+|--------|--------|
+| `id` | ID câu hỏi (khớp `R2AIStage1DATA.json`) |
+| `question` | Câu hỏi |
+| `relevant_docs` | `["mã_văn_bản\|tên_văn_bản", ...]` |
+| `relevant_articles` | `["mã\|tên\|Điều N", ...]` |
+| `answer` | Placeholder hoặc câu trả lời ngắn |
 
 ### Bài nộp QA (`submission_qa.zip`)
 
-CSV trong ZIP:
+Cùng schema, **2000 dòng**; trường `answer` là câu trả lời grounded đầy đủ (`Căn cứ pháp luật: ... Trả lời: ...`).
 
-| Cột | Mô tả |
-|-----|--------|
-| `question_id` | ID câu hỏi |
-| `answer` | Câu trả lời tư vấn pháp lý (grounded trên điều luật truy hồi) |
+Sinh bằng pipeline: [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md)
 
 ---
 
 ## 1.3. Hướng dẫn truy cập / sử dụng dữ liệu
 
-### Tải gói dữ liệu đã đóng gói
+### Tải từ Google Drive
 
-> **Link:** `[ĐIỀN LINK GOOGLE DRIVE / ONEDRIVE]`
+**Link:** https://drive.google.com/drive/folders/1yrTBTV-pTdS2FObe1shBHiYmMPsxhazH?usp=drive_link
 
-Cấu trúc sau khi giải nén vào thư mục gốc repo:
+Folder gồm **`data/`** và **`index/`**. Hướng dẫn copy vào repo (macOS + Windows): [04_HUONG_DAN_TAI_HIEN_2000_CAU.md](04_HUONG_DAN_TAI_HIEN_2000_CAU.md) mục 2.3.
+
+Cấu trúc sau khi copy vào `lexi-agent/`:
 
 ```
-vietnamese-legal-chatbot/
+lexi-agent/
 ├── data/
 │   ├── corpus/
 │   │   └── legal_corpus_merged.json
