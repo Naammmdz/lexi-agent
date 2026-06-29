@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lexi Agent — Trợ lý Pháp lý</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/lexi.css?v=4" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body class="lexi-agent-surface">
+  <div id="app" class="lexi-agent-surface lexi-shell">
+    <!-- Sidebar — LawShield LexiAgentSidebar -->
+    <aside class="lexi-sidebar" id="sidebar" data-open="true">
+      <div class="lexi-sidebar-inner">
+        <div class="lexi-sidebar-head">
+          <a href="#" class="lexi-brand-link" id="brand-link">
+            <img src="/static/lexi-icon.svg" alt="" class="lexi-icon-sm" width="22" height="22" />
+            <span class="lexi-brand-serif lexi-brand-text">Lexi</span>
+          </a>
+          <button type="button" class="lexi-icon-btn" id="btn-toggle-sidebar" title="Thu gọn sidebar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+          </button>
+        </div>
+
+        <nav class="lexi-nav">
+          <button type="button" class="lexi-nav-item" disabled title="LawShield">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            <span class="lexi-nav-label">LawShield</span>
+          </button>
+          <div class="lexi-nav-chat-row lexi-nav-item active" data-tab="chat">
+            <button type="button" class="lexi-nav-chat-btn" id="nav-chat">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span class="lexi-nav-label">Chat</span>
+            </button>
+            <button type="button" class="lexi-nav-plus" id="btn-new-chat" title="Cuộc trò chuyện mới">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+          </div>
+          <button type="button" class="lexi-nav-item" data-tab="workflows" id="nav-workflows">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span class="lexi-nav-label">Quy trình</span>
+          </button>
+          <button type="button" class="lexi-nav-item" data-tab="documents" id="nav-documents">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="lexi-nav-label">Tài liệu</span>
+          </button>
+        </nav>
+
+        <div class="lexi-history-section">
+          <button type="button" class="lexi-section-toggle" id="history-toggle">
+            <span>Hội thoại gần đây</span>
+            <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="lexi-history-list law-scrollbar" id="conversation-list"></div>
+        </div>
+
+        <div class="lexi-sidebar-status">
+          <div id="system-status" class="lexi-status-pill">
+            <span class="law-breathe status-dot"></span>
+            <span class="status-text">Đang khởi tạo...</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main workspace -->
+    <div class="lexi-workspace">
+      <!-- Chat tab -->
+      <section class="lexi-tab-panel active" id="panel-chat">
+        <div id="welcome-view" class="lexi-welcome">
+          <div class="lexi-welcome-inner">
+            <div class="lexi-hero-stage" id="hero-stage">
+              <img src="/static/lexi-icon.svg" alt="" class="lexi-hero-icon" id="hero-icon" width="56" height="56" />
+              <h1 class="lexi-brand-serif lexi-hero-title" id="hero-title">Xin chào, bạn</h1>
+            </div>
+            <div class="lexi-prompt-shell" id="composer-welcome-shell">
+              <div class="lexi-prompt-box">
+                <div class="lexi-prompt-textarea-wrap">
+                  <textarea id="input-welcome" rows="1" placeholder="Hỏi Lexi về pháp luật Việt Nam..." autocomplete="off"></textarea>
+                </div>
+                <div class="lexi-prompt-actions">
+                  <div class="lexi-prompt-left"></div>
+                  <button type="button" class="lexi-send-round" id="send-welcome" aria-label="Gửi">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p class="lexi-footer-note">AI có thể mắc lỗi. Nội dung trả lời không thay thế ý kiến tư vấn pháp lý.</p>
+          </div>
+        </div>
+
+        <div id="chat-view" class="lexi-chat hidden">
+          <div class="lexi-messages-scroll law-scrollbar" id="messages-scroll">
+            <div class="lexi-messages-inner" id="messages"></div>
+            <div id="messages-bottom"></div>
+          </div>
+          <div class="lexi-composer-sticky">
+            <div class="lexi-prompt-shell lexi-prompt-centered">
+              <div class="lexi-prompt-box" id="composer-chat-shell">
+                <div class="lexi-prompt-textarea-wrap">
+                  <textarea id="input-chat" rows="1" placeholder="Tiếp tục hội thoại..." autocomplete="off"></textarea>
+                </div>
+                <div class="lexi-prompt-actions">
+                  <div class="lexi-prompt-left"></div>
+                  <button type="button" class="lexi-send-round" id="send-chat" aria-label="Gửi">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                  </button>
+                </div>
+              </div>
+              <p class="lexi-footer-note">Nội dung AI chỉ mang tính hỗ trợ tham khảo; vui lòng xác minh với nguồn pháp luật chính thức.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Placeholder tabs -->
+      <section class="lexi-tab-panel" id="panel-workflows">
+        <div class="lexi-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <h2>Quy trình</h2>
+          <p>Thư viện quy trình nghiệp vụ — cần kết nối backend LawShield để dùng đầy đủ.</p>
+        </div>
+      </section>
+      <section class="lexi-tab-panel" id="panel-documents">
+        <div class="lexi-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          <h2>Tài liệu</h2>
+          <p>Quản lý tài liệu soạn thảo — cần kết nối backend LawShield để dùng đầy đủ.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Source panel — LexiSourcePanel simplified -->
+    <aside class="lexi-source-panel" id="source-panel" data-open="false">
+      <div class="lexi-source-resize" id="source-resize"></div>
+      <div class="lexi-source-tabs">
+        <div class="lexi-source-tab active" id="source-tab-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3-3 6-8 6-13a6 6 0 0 1 12 0c0 5 3 10 6 13"/><path d="M12 8v13"/></svg>
+          <span id="source-tab-title">Căn cứ pháp lý</span>
+          <button type="button" class="lexi-tab-close" id="close-source-tab" aria-label="Đóng">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <button type="button" class="lexi-source-panel-close" id="close-source-panel" title="Đóng panel">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="lexi-source-body law-scrollbar" id="sources-content">
+        <p class="lexi-sources-empty">Tài liệu tham khảo sẽ hiển thị sau mỗi câu trả lời.</p>
+      </div>
+    </aside>
+  </div>
+
+  <script src="/static/app.js?v=4"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Lexi">
+  <defs>
+    <linearGradient id="lexiBlue" x1="118" y1="96" x2="392" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60A5FA"/>
+      <stop offset="0.52" stop-color="#2F80ED"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="lexiSoft" x1="158" y1="132" x2="360" y2="376" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#93C5FD"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+    <filter id="softShadow" x="54" y="54" width="404" height="404" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#2563EB" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+  <g filter="url(#softShadow)">
+    <g class="lexi-spin-target" style="transform-origin:center">
+      <path d="M256 74 C285 74 303 103 290 129 L270 170 C264 182 248 182 242 170 L222 129 C209 103 227 74 256 74Z" fill="url(#lexiBlue)"/>
+      <path d="M374.8 123.6 C395.3 144.1 387.5 177.3 360 186.5 L316.5 201 C303.8 205.2 292.8 194.2 297 181.5 L311.5 138 C320.7 110.5 354.3 103.1 374.8 123.6Z" fill="url(#lexiSoft)"/>
+      <path d="M438 256 C438 285 409 303 383 290 L342 270 C330 264 330 248 342 242 L383 222 C409 209 438 227 438 256Z" fill="url(#lexiBlue)"/>
+      <path d="M374.4 388.4 C353.9 408.9 320.7 401.1 311.5 373.6 L297 330.1 C292.8 317.4 303.8 306.4 316.5 310.6 L360 325.1 C387.5 334.3 394.9 367.9 374.4 388.4Z" fill="url(#lexiSoft)"/>
+      <path d="M256 438 C227 438 209 409 222 383 L242 342 C248 330 264 330 270 342 L290 383 C303 409 285 438 256 438Z" fill="url(#lexiBlue)"/>
+      <path d="M123.6 388.4 C103.1 367.9 110.9 334.7 138.4 325.5 L181.9 311 C194.6 306.8 205.6 317.8 201.4 330.5 L186.9 374 C177.7 401.5 144.1 408.9 123.6 388.4Z" fill="url(#lexiSoft)"/>
+      <path d="M74 256 C74 227 103 209 129 222 L170 242 C182 248 182 264 170 270 L129 290 C103 303 74 285 74 256Z" fill="url(#lexiBlue)"/>
+      <path d="M123.6 123.6 C144.1 103.1 177.3 110.9 186.5 138.4 L201 181.9 C205.2 194.6 194.2 205.6 181.5 201.4 L138 186.9 C110.5 177.7 103.1 144.1 123.6 123.6Z" fill="url(#lexiSoft)"/>
+      <circle cx="256" cy="256" r="66" fill="white" fill-opacity="0.96"/>
+    </g>
+  </g>
+</svg>
